@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.powernode.workbench.mapper.TblContactsMapper" >
+  <resultMap id="BaseResultMap" type="com.powernode.workbench.pojo.TblContacts" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="owner" property="owner" jdbcType="CHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="customerId" property="customerid" jdbcType="CHAR" />
+    <result column="fullname" property="fullname" jdbcType="VARCHAR" />
+    <result column="appellation" property="appellation" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="mphone" property="mphone" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="birth" property="birth" jdbcType="CHAR" />
+    <result column="createBy" property="createby" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="CHAR" />
+    <result column="editBy" property="editby" jdbcType="VARCHAR" />
+    <result column="editTime" property="edittime" jdbcType="CHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="contactSummary" property="contactsummary" jdbcType="VARCHAR" />
+    <result column="nextContactTime" property="nextcontacttime" jdbcType="CHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, owner, source, customerId, fullname, appellation, email, mphone, job, birth, 
+    createBy, createTime, editBy, editTime, description, contactSummary, nextContactTime, 
+    address
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.powernode.workbench.pojo.TblContactsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tbl_contacts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_contacts
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_contacts
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.powernode.workbench.pojo.TblContactsExample" >
+    delete from tbl_contacts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.powernode.workbench.pojo.TblContacts" >
+    insert into tbl_contacts (id, owner, source, 
+      customerId, fullname, appellation, 
+      email, mphone, job, 
+      birth, createBy, createTime, 
+      editBy, editTime, description, 
+      contactSummary, nextContactTime, address
+      )
+    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{source,jdbcType=VARCHAR}, 
+      #{customerid,jdbcType=CHAR}, #{fullname,jdbcType=VARCHAR}, #{appellation,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{mphone,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR}, 
+      #{birth,jdbcType=CHAR}, #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=CHAR}, 
+      #{editby,jdbcType=VARCHAR}, #{edittime,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, 
+      #{contactsummary,jdbcType=VARCHAR}, #{nextcontacttime,jdbcType=CHAR}, #{address,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.powernode.workbench.pojo.TblContacts" >
+    insert into tbl_contacts
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="owner != null" >
+        owner,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="customerid != null" >
+        customerId,
+      </if>
+      <if test="fullname != null" >
+        fullname,
+      </if>
+      <if test="appellation != null" >
+        appellation,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="mphone != null" >
+        mphone,
+      </if>
+      <if test="job != null" >
+        job,
+      </if>
+      <if test="birth != null" >
+        birth,
+      </if>
+      <if test="createby != null" >
+        createBy,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="editby != null" >
+        editBy,
+      </if>
+      <if test="edittime != null" >
+        editTime,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="contactsummary != null" >
+        contactSummary,
+      </if>
+      <if test="nextcontacttime != null" >
+        nextContactTime,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="owner != null" >
+        #{owner,jdbcType=CHAR},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="customerid != null" >
+        #{customerid,jdbcType=CHAR},
+      </if>
+      <if test="fullname != null" >
+        #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="appellation != null" >
+        #{appellation,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mphone != null" >
+        #{mphone,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null" >
+        #{birth,jdbcType=CHAR},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=CHAR},
+      </if>
+      <if test="editby != null" >
+        #{editby,jdbcType=VARCHAR},
+      </if>
+      <if test="edittime != null" >
+        #{edittime,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="contactsummary != null" >
+        #{contactsummary,jdbcType=VARCHAR},
+      </if>
+      <if test="nextcontacttime != null" >
+        #{nextcontacttime,jdbcType=CHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.powernode.workbench.pojo.TblContactsExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_contacts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_contacts
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=CHAR},
+      </if>
+      <if test="record.owner != null" >
+        owner = #{record.owner,jdbcType=CHAR},
+      </if>
+      <if test="record.source != null" >
+        source = #{record.source,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerid != null" >
+        customerId = #{record.customerid,jdbcType=CHAR},
+      </if>
+      <if test="record.fullname != null" >
+        fullname = #{record.fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appellation != null" >
+        appellation = #{record.appellation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mphone != null" >
+        mphone = #{record.mphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.job != null" >
+        job = #{record.job,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birth != null" >
+        birth = #{record.birth,jdbcType=CHAR},
+      </if>
+      <if test="record.createby != null" >
+        createBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        createTime = #{record.createtime,jdbcType=CHAR},
+      </if>
+      <if test="record.editby != null" >
+        editBy = #{record.editby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.edittime != null" >
+        editTime = #{record.edittime,jdbcType=CHAR},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactsummary != null" >
+        contactSummary = #{record.contactsummary,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nextcontacttime != null" >
+        nextContactTime = #{record.nextcontacttime,jdbcType=CHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_contacts
+    set id = #{record.id,jdbcType=CHAR},
+      owner = #{record.owner,jdbcType=CHAR},
+      source = #{record.source,jdbcType=VARCHAR},
+      customerId = #{record.customerid,jdbcType=CHAR},
+      fullname = #{record.fullname,jdbcType=VARCHAR},
+      appellation = #{record.appellation,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      mphone = #{record.mphone,jdbcType=VARCHAR},
+      job = #{record.job,jdbcType=VARCHAR},
+      birth = #{record.birth,jdbcType=CHAR},
+      createBy = #{record.createby,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=CHAR},
+      editBy = #{record.editby,jdbcType=VARCHAR},
+      editTime = #{record.edittime,jdbcType=CHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      contactSummary = #{record.contactsummary,jdbcType=VARCHAR},
+      nextContactTime = #{record.nextcontacttime,jdbcType=CHAR},
+      address = #{record.address,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.powernode.workbench.pojo.TblContacts" >
+    update tbl_contacts
+    <set >
+      <if test="owner != null" >
+        owner = #{owner,jdbcType=CHAR},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="customerid != null" >
+        customerId = #{customerid,jdbcType=CHAR},
+      </if>
+      <if test="fullname != null" >
+        fullname = #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="appellation != null" >
+        appellation = #{appellation,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mphone != null" >
+        mphone = #{mphone,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null" >
+        birth = #{birth,jdbcType=CHAR},
+      </if>
+      <if test="createby != null" >
+        createBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=CHAR},
+      </if>
+      <if test="editby != null" >
+        editBy = #{editby,jdbcType=VARCHAR},
+      </if>
+      <if test="edittime != null" >
+        editTime = #{edittime,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="contactsummary != null" >
+        contactSummary = #{contactsummary,jdbcType=VARCHAR},
+      </if>
+      <if test="nextcontacttime != null" >
+        nextContactTime = #{nextcontacttime,jdbcType=CHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.powernode.workbench.pojo.TblContacts" >
+    update tbl_contacts
+    set owner = #{owner,jdbcType=CHAR},
+      source = #{source,jdbcType=VARCHAR},
+      customerId = #{customerid,jdbcType=CHAR},
+      fullname = #{fullname,jdbcType=VARCHAR},
+      appellation = #{appellation,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      mphone = #{mphone,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      birth = #{birth,jdbcType=CHAR},
+      createBy = #{createby,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=CHAR},
+      editBy = #{editby,jdbcType=VARCHAR},
+      editTime = #{edittime,jdbcType=CHAR},
+      description = #{description,jdbcType=VARCHAR},
+      contactSummary = #{contactsummary,jdbcType=VARCHAR},
+      nextContactTime = #{nextcontacttime,jdbcType=CHAR},
+      address = #{address,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

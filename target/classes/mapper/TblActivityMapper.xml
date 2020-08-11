@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.powernode.workbench.mapper.TblActivityMapper" >
+  <resultMap id="BaseResultMap" type="com.powernode.workbench.pojo.TblActivity" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="owner" property="owner" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="startDate" property="startdate" jdbcType="CHAR" />
+    <result column="endDate" property="enddate" jdbcType="CHAR" />
+    <result column="cost" property="cost" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="CHAR" />
+    <result column="createBy" property="createby" jdbcType="VARCHAR" />
+    <result column="editTime" property="edittime" jdbcType="CHAR" />
+    <result column="editBy" property="editby" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="getActivityName" resultType="java.lang.String">
+        select name from tbl_activity
+  </select>
+
+  <select id="getActivityCost" resultType="java.lang.String">
+        select cost from tbl_activity
+  </select>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, owner, name, startDate, endDate, cost, description, createTime, createBy, editTime, 
+    editBy
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.powernode.workbench.pojo.TblActivityExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tbl_activity
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_activity
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_activity
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.powernode.workbench.pojo.TblActivityExample" >
+    delete from tbl_activity
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.powernode.workbench.pojo.TblActivity" >
+    insert into tbl_activity (id, owner, name, startDate, 
+      endDate, cost, description, 
+      createTime, createBy, editTime, 
+      editBy)
+    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{startdate,jdbcType=CHAR}, 
+      #{enddate,jdbcType=CHAR}, #{cost,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=CHAR}, #{createby,jdbcType=VARCHAR}, #{edittime,jdbcType=CHAR}, 
+      #{editby,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.powernode.workbench.pojo.TblActivity" >
+    insert into tbl_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="owner != null" >
+        owner,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="startdate != null" >
+        startDate,
+      </if>
+      <if test="enddate != null" >
+        endDate,
+      </if>
+      <if test="cost != null" >
+        cost,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="createby != null" >
+        createBy,
+      </if>
+      <if test="edittime != null" >
+        editTime,
+      </if>
+      <if test="editby != null" >
+        editBy,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="owner != null" >
+        #{owner,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startdate != null" >
+        #{startdate,jdbcType=CHAR},
+      </if>
+      <if test="enddate != null" >
+        #{enddate,jdbcType=CHAR},
+      </if>
+      <if test="cost != null" >
+        #{cost,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=CHAR},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="edittime != null" >
+        #{edittime,jdbcType=CHAR},
+      </if>
+      <if test="editby != null" >
+        #{editby,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.powernode.workbench.pojo.TblActivityExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_activity
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_activity
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=CHAR},
+      </if>
+      <if test="record.owner != null" >
+        owner = #{record.owner,jdbcType=CHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startdate != null" >
+        startDate = #{record.startdate,jdbcType=CHAR},
+      </if>
+      <if test="record.enddate != null" >
+        endDate = #{record.enddate,jdbcType=CHAR},
+      </if>
+      <if test="record.cost != null" >
+        cost = #{record.cost,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        createTime = #{record.createtime,jdbcType=CHAR},
+      </if>
+      <if test="record.createby != null" >
+        createBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.edittime != null" >
+        editTime = #{record.edittime,jdbcType=CHAR},
+      </if>
+      <if test="record.editby != null" >
+        editBy = #{record.editby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_activity
+    set id = #{record.id,jdbcType=CHAR},
+      owner = #{record.owner,jdbcType=CHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      startDate = #{record.startdate,jdbcType=CHAR},
+      endDate = #{record.enddate,jdbcType=CHAR},
+      cost = #{record.cost,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=CHAR},
+      createBy = #{record.createby,jdbcType=VARCHAR},
+      editTime = #{record.edittime,jdbcType=CHAR},
+      editBy = #{record.editby,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.powernode.workbench.pojo.TblActivity" >
+    update tbl_activity
+    <set >
+      <if test="owner != null" >
+        owner = #{owner,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startdate != null" >
+        startDate = #{startdate,jdbcType=CHAR},
+      </if>
+      <if test="enddate != null" >
+        endDate = #{enddate,jdbcType=CHAR},
+      </if>
+      <if test="cost != null" >
+        cost = #{cost,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=CHAR},
+      </if>
+      <if test="createby != null" >
+        createBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="edittime != null" >
+        editTime = #{edittime,jdbcType=CHAR},
+      </if>
+      <if test="editby != null" >
+        editBy = #{editby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.powernode.workbench.pojo.TblActivity" >
+    update tbl_activity
+    set owner = #{owner,jdbcType=CHAR},
+      name = #{name,jdbcType=VARCHAR},
+      startDate = #{startdate,jdbcType=CHAR},
+      endDate = #{enddate,jdbcType=CHAR},
+      cost = #{cost,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=CHAR},
+      createBy = #{createby,jdbcType=VARCHAR},
+      editTime = #{edittime,jdbcType=CHAR},
+      editBy = #{editby,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

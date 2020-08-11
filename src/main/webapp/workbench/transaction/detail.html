@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+
+<style type="text/css">
+.mystage{
+	font-size: 20px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.closingDate{
+	font-size : 15px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+</style>
+	
+<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+	//默认情况下取消和保存按钮是隐藏的
+	var cancelAndSaveBtnDefault = true;
+
+
+	//接收交易的ID
+	var con = window.location.search;
+	var tranId = decodeURI(con.substring(con.indexOf("=")+1));
+
+	
+	$(function(){
+		$("#remark").focus(function(){
+			if(cancelAndSaveBtnDefault){
+				//设置remarkDiv的高度为130px
+				$("#remarkDiv").css("height","130px");
+				//显示
+				$("#cancelAndSaveBtn").show("2000");
+				cancelAndSaveBtnDefault = false;
+			}
+		});
+		
+		$("#cancelBtn").click(function(){
+			//显示
+			$("#cancelAndSaveBtn").hide();
+			//设置remarkDiv的高度为130px
+			$("#remarkDiv").css("height","90px");
+			cancelAndSaveBtnDefault = true;
+		});
+		
+		$(".remarkDiv").mouseover(function(){
+			$(this).children("div").children("div").show();
+		});
+		
+		$(".remarkDiv").mouseout(function(){
+			$(this).children("div").children("div").hide();
+		});
+		
+		$(".myHref").mouseover(function(){
+			$(this).children("span").css("color","red");
+		});
+		
+		$(".myHref").mouseout(function(){
+			$(this).children("span").css("color","#E6E6E6");
+		});
+		
+		
+		//阶段提示框
+		$(".mystage").popover({
+            trigger:'manual',
+            placement : 'bottom',
+            html: 'true',
+            animation: false
+        }).on("mouseenter", function () {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function () {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function () {
+                    var _this = this;
+                    setTimeout(function () {
+                        if (!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100);
+                });
+
+		//获取跳转之后的详情页面信息
+		getDetailMegssage()
+
+		//获取当前阶段……
+		getStage()
+
+		getTranHistory()
+	});
+
+
+	//获取跳转之后的详情页面信息   ①
+	function getDetailMegssage() {
+		$.ajax({
+			url:'/tran/getDetailMegssage',
+			type:'get',
+			datatype:'json',
+			data:{id:tranId},
+			success:function (l) {
+				if(l.success){
+					/*$("#tran-id").text(l.data.id)*/
+					$("#tran-owner").text(l.data.owner)
+					$("#tran-money").text(l.data.money)
+					$("#tran-name").text(l.data.name)
+					$("#tran-expe").text(l.data.expecteddate)
+					$("#tran-customerid").text(l.data.customerid)
+					$("#tran-stage").text(l.data.stage)
+					$("#tran-type").text(l.data.type)
+					$("#tran-source").text(l.data.source)
+					$("#tran-activityid").text(l.data.activityid)
+					$("#tran-contactsid").text(l.data.contactsid)
+					$("#tran-createby").html(l.data.createby+"&nbsp;&nbsp;")
+					$("#tran-createtime").text(l.data.createtime)
+
+					if(l.data.editby!=null){
+						$("#tran-editby").html(l.data.editby+"&nbsp;&nbsp;")
+					}
+					$("#tran-editby").html("暂无修改人"+"&nbsp;&nbsp;");
+
+					if(l.data.edittime!=null){
+						$("#tran-edittime").text(l.data.edittime)
+					}
+					$("#tran-edittime").text("暂无修改时间")
+					$("#tran-description").text(l.data.description)
+					$("#tran-contactsummary").text(l.data.contactsummary)
+					$("#tran-nextcontacttime").text(l.data.nextcontacttime)
+					$("#tran-poss").text(l.data.poss)
+					$("#title").text(l.data.name)
+					$("#title-money").text("￥"+l.data.money)
+				}
+			}
+		})
+	}
+
+	//获取阶段……
+	function getStage() {
+		$.ajax({
+			url:'/tran/stagelogo',
+			type:'get',
+			datatype:'json',
+			data:{tranId: tranId},
+			success:function (obj) {
+				if(obj.success){
+
+					var items = obj.data.result;
+					var point = obj.data.point;
+					var dvList = obj.data.dvList;
+					var span = "";
+					span+='阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+					for(var i=0;i<items.length;i++){
+						var item = items[i];
+
+						if (item.type=="1"){
+							span+='<span id='+item.location+' class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="'+item.text+'" style="color: #90F790;"></span>';
+							span+='-----------';
+						}
+						if (item.type=="2"){
+							span+='<span id='+item.location+' class="glyphicon glyphicon-map-marker mystage" data-toggle="popover" data-placement="bottom" data-content="'+item.text+'" style="color: #90f790;"></span>';
+							span+='-----------';
+						}
+						if (item.type=="3"){
+							span+='<span id='+item.location+' class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="'+item.text+'"></span>';
+							span+='-----------';
+						}
+						if (item.type=="4"){
+							span+='<span id='+item.location+' class="glyphicon glyphicon-remove mystage" style="color: red;" data-toggle="popover" data-placement="bottom" data-content="'+item.text+'"></span>';
+							span+='-----------';
+						}
+						if (item.type=="5"){
+							span+='<span id='+item.location+' class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="'+item.text+'"></span>';
+							span+='-----------';
+						}
+					}
+					$("#spanPross").html(span);
+
+					/*移动到弹出插件内容插件*/
+					$("[data-toggle='popover']").popover({
+						trigger:'manual',
+						placement : 'top',//弹出位置
+						animation: false
+					}).on("mouseenter", function () {
+						var _this = this;
+						$(this).popover("show");
+						$(this).siblings(".popover").on("mouseleave", function () {
+							$(_this).popover('hide');
+						});
+					}).on("mouseleave", function () {
+						var _this = this;
+						setTimeout(function () {
+							if (!$(".popover:hover").length) {
+								$(_this).popover("hide")
+							}
+						}, 100);
+					});
+
+					//根据点击阶段的变化，阶段值和可能性值，修改者和时间都要改变
+					$("#spanPross").on('click','span',function () {
+						//获取当前点击的阶段
+						var stage = $(this).attr("data-content");
+
+						//获取当前点击的索引位置
+						var location = $(this).attr("id");
+
+						//获取金额
+						var money = $("#tran-money").text();
+
+						//预计成交日期
+						var expecteddate = $("#tran-expe").text();
+
+						$.ajax({
+							url:'/tran/addhistory',
+							type:'post',
+							data:{tranid:tranId,stage:stage,money:money,expecteddate:expecteddate},
+							dataType:'json',
+							success:function (obj) {
+								if (obj.success){
+									//更改界面值
+									$("#tran-editby").html(obj.data.editby+"&nbsp;&nbsp;");
+									$("#tran-edittime").text(obj.data.edittime);
+									$("#tran-stage").text(obj.data.stage);
+									$("#tran-poss").text(obj.data.poss);
+
+									//
+									getStageLogo(point,location,dvList);
+
+									getTranHistory()
+								}
+							}
+						})
+
+					})
+				}
+			}
+		})
+	}
+
+	function getStageLogo(point,location,dvList) {//location  7
+		/*获取点击当前阶段的可能性值*/
+		var currentPross = $("#tran-poss").text();
+		if (currentPross=="0"){//前7个是黑圈
+
+			for(var i=0;i<point;i++){//前7个
+				$("#"+i).removeClass();
+				$("#"+i).addClass("glyphicon glyphicon-record mystage");
+				$("#"+i).css("color","#000000");
+			}
+
+			for(var i=point;i<dvList.length;i++){
+				if (i==location){
+					//红叉
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-remove mystage");
+					$("#"+i).css("color","#ff0000");
+				}else {
+					//黑叉
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-remove mystage");
+					$("#"+i).css("color","#000000");
+				}
+			}
+		}else {//非0
+			for(var i=0;i<dvList.length;i++){
+				if (i==location){
+					//锚点
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-map-marker mystage");
+					$("#"+i).css("color","#90F790");
+				}else if(i<location){
+					//绿圈
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-ok-circle mystage");
+					$("#"+i).css("color","#90F790");
+				}else if(i>location && i<point){
+					//黑圈
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-record mystage");
+					$("#"+i).css("color","#000000");
+				}else{
+					//黑叉
+					$("#"+i).removeClass();
+					$("#"+i).addClass("glyphicon glyphicon-remove mystage");
+					$("#"+i).css("color","#000000");
+				}
+
+
+			}
+
+
+		}
+
+
+	}
+
+	function getTranHistory() {
+		$.ajax({
+			url:'/tran/getTranHistory',
+			type:'get',
+			datatype:'json',
+			data:{tranId:tranId},
+			success:function (l) {
+				if(l.success){
+					var html =""
+					var items = l.data;
+					for (var i = 0; i < items.length; i++) {
+						html+='<tr>'
+						html+='<td>'+items[i].stage+'</td>'
+						html+='<td>'+items[i].money+'</td>'
+						html+='<td>'+items[i].poss+'</td>'
+						html+='<td>'+items[i].expecteddate+'</td>'
+						html+='<td>'+items[i].createtime+'</td>'
+						html+='<td>'+items[i].createby+'</td>'
+						html+='</tr>'
+					}
+					$("#tbd-history").html(html)
+				}
+			}
+		})
+	}
+
+	
+</script>
+
+</head>
+<body>
+	
+	<!-- 返回按钮 -->
+	<div style="position: relative; top: 35px; left: 10px;">
+		<a href="javascript:void(0);" onclick="window.location.href='index.html';"><span class="glyphicon glyphicon-arrow-left" style="font-size: 20px; color: #DDDDDD"></span></a>
+	</div>
+	
+	<!-- 大标题 -->
+	<div style="position: relative; left: 40px; top: -30px;">
+		<div class="page-header">
+			<h3><span id="title"></span>&nbsp;&nbsp;<span><small id="title-money"></small></span></h3>
+		</div>
+		<div style="position: relative; height: 50px; width: 250px;  top: -72px; left: 700px;">
+			<button type="button" class="btn btn-default" onclick="window.location.href='edit.html';"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+		</div>
+	</div>
+
+	<!-- 阶段状态 -->
+	<div style="position: relative; left: 40px; top: -50px;" id="spanPross">
+
+		<!--阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		&lt;!&ndash;绿圈&ndash;&gt;
+		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="资质审查" style="color: #90F790;"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="需求分析" style="color: #90F790;"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="价值建议" style="color: #90F790;"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="确定决策者" style="color: #90F790;"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		&lt;!&ndash;锚点&ndash;&gt;
+		<span class="glyphicon glyphicon-map-marker mystage" data-toggle="popover" data-placement="bottom" data-content="提案/报价" style="color: #90F790;"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		&lt;!&ndash;黑圈&ndash;&gt;
+		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="谈判/复审"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="成交"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-remove mystage" data-toggle="popover" data-placement="bottom" data-content="丢失的线索"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="glyphicon glyphicon-remove mystage"	style="color: red;" data-toggle="popover" data-placement="bottom" data-content="因竞争丢失关闭"></span>
+		-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+		<span class="closingDate">2010-10-10</span>-->
+	</div>
+	
+	<!-- 详细信息 -->
+	<div style="position: relative; top: 0px;">
+		<div style="position: relative; left: 40px; height: 30px;">
+			<div style="width: 300px; color: gray;">所有者</div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="tran-owner"></b></div>
+			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">金额</div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="tran-money"></b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 10px;">
+			<div style="width: 300px; color: gray;">名称</div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="tran-name"></b></div>
+			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">预计成交日期</div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="tran-expe"></b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 20px;">
+			<div style="width: 300px; color: gray;">客户名称</div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="tran-customerid"></b></div>
+			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">阶段</div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="tran-stage"></b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 30px;">
+			<div style="width: 300px; color: gray;">类型</div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="tran-type"></b></div>
+			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">可能性</div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="tran-poss"></b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 40px;">
+			<div style="width: 300px; color: gray;">来源</div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="tran-source"></b></div>
+			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">市场活动源</div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="tran-activityid"></b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 50px;">
+			<div style="width: 300px; color: gray;">联系人名称</div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="tran-contactsid">李四</b></div>
+			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 60px;">
+			<div style="width: 300px; color: gray;">创建者</div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="tran-createby"></b><small style="font-size: 10px; color: gray;" id="tran-createtime"></small></div>
+			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 70px;">
+			<div style="width: 300px; color: gray;">修改者</div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="tran-editby"></b><small style="font-size: 10px; color: gray;" id="tran-edittime"></small></div>
+			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 80px;">
+			<div style="width: 300px; color: gray;">描述</div>
+			<div style="width: 630px;position: relative; left: 200px; top: -20px;">
+				<b id="tran-description">
+
+				</b>
+			</div>
+			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 90px;">
+			<div style="width: 300px; color: gray;">联系纪要</div>
+			<div style="width: 630px;position: relative; left: 200px; top: -20px;">
+				<b id="tran-contactsummary">
+					&nbsp;
+				</b>
+			</div>
+			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+		<div style="position: relative; left: 40px; height: 30px; top: 100px;">
+			<div style="width: 300px; color: gray;">下次联系时间</div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="tran-nextcontacttime">&nbsp;</b></div>
+			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -20px;"></div>
+		</div>
+	</div>
+	
+	<!-- 备注 -->
+	<div style="position: relative; top: 100px; left: 40px;">
+		<div class="page-header">
+			<h4>备注</h4>
+		</div>
+		
+		<!-- 备注1 -->
+		<div class="remarkDiv" style="height: 60px;">
+			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
+			<div style="position: relative; top: -40px; left: 40px;" >
+				<h5>哎呦！</h5>
+				<font color="gray">交易</font> <font color="gray">-</font> <b>动力节点-交易01</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
+				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
+					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 备注2 -->
+		<div class="remarkDiv" style="height: 60px;">
+			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
+			<div style="position: relative; top: -40px; left: 40px;" >
+				<h5>呵呵！</h5>
+				<font color="gray">交易</font> <font color="gray">-</font> <b>动力节点-交易01</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
+				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
+					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+				</div>
+			</div>
+		</div>
+		
+		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
+			<form role="form" style="position: relative;top: 10px; left: 10px;">
+				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
+				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
+					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
+					<button type="button" class="btn btn-primary">保存</button>
+				</p>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 阶段历史 -->
+	<div>
+		<div style="position: relative; top: 100px; left: 40px;">
+			<div class="page-header">
+				<h4>阶段历史</h4>
+			</div>
+			<div style="position: relative;top: 0px;">
+				<table id="activityTable" class="table table-hover" style="width: 900px;">
+					<thead>
+						<tr style="color: #B3B3B3;">
+							<td>阶段</td>
+							<td>金额</td>
+							<td>可能性</td>
+							<td>预计成交日期</td>
+							<td>创建时间</td>
+							<td>创建人</td>
+						</tr>
+					</thead>
+					<tbody id="tbd-history">
+						<!--<tr>
+							<td>资质审查</td>
+							<td>5,000</td>
+							<td>10</td>
+							<td>2017-02-07</td>
+							<td>2016-10-10 10:10:10</td>
+							<td>zhangsan</td>
+						</tr>
+						<tr>
+							<td>需求分析</td>
+							<td>5,000</td>
+							<td>20</td>
+							<td>2017-02-07</td>
+							<td>2016-10-20 10:10:10</td>
+							<td>zhangsan</td>
+						</tr>
+						<tr>
+							<td>谈判/复审</td>
+							<td>5,000</td>
+							<td>90</td>
+							<td>2017-02-07</td>
+							<td>2017-02-09 10:10:10</td>
+							<td>zhangsan</td>
+						</tr>-->
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div style="height: 200px;"></div>
+	
+</body>
+</html>
